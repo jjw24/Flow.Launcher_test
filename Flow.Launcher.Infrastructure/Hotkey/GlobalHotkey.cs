@@ -11,9 +11,9 @@ namespace Flow.Launcher.Infrastructure.Hotkey
     public unsafe class GlobalHotkey : IDisposable
     {
         private static readonly IntPtr hookId;
-        
-        
-        
+
+
+
         public delegate bool KeyboardCallback(KeyEvent keyEvent, int vkCode, SpecialKeyState state);
         internal static Func<KeyEvent, int, SpecialKeyState, bool> hookedKeyboardCallback;
 
@@ -26,12 +26,15 @@ namespace Flow.Launcher.Infrastructure.Hotkey
         static GlobalHotkey()
         {
             // Set the hook
-            hookId = InterceptKeys.SetHook(& LowLevelKeyboardProc);
+            hookId = InterceptKeys.SetHook(&LowLevelKeyboardProc);
         }
 
         public static SpecialKeyState CheckModifiers()
         {
             SpecialKeyState state = new SpecialKeyState();
+
+           
+
             if ((InterceptKeys.GetKeyState(VK_SHIFT) & 0x8000) != 0)
             {
                 //SHIFT is pressed
