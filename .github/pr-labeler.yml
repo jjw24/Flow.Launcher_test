@@ -18,6 +18,10 @@ customLabels:
     label: 'kind/i18n'
   - text: 'feature'
     label: 'enhancement'
+  - text: 'refactor'
+    label: 'enhancement'
+  - text: 'refactor'
+    label: 'Code Refactor'
 
    
 # Search the body of the PR for the `text` [default: true]
