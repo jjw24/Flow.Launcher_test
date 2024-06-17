@@ -11,7 +11,7 @@ customLabels:
   - text: 'fix'
     label: 'bug'
   - text: 'dependabot'
-    label: 'bug
+    label: 'bug'
   - text: 'feature'
     label: 'enhancement'
 # Search the body of the PR for the `text` [default: true]
