@@ -12,8 +12,14 @@ customLabels:
     label: 'bug'
   - text: 'dependabot'
     label: 'bug'
+  - text: 'New Crowdin updates'
+    label: 'bug'
+  - text: 'New Crowdin updates'
+    label: 'kind/i18n'
   - text: 'feature'
     label: 'enhancement'
+
+   
 # Search the body of the PR for the `text` [default: true]
 searchBody: true
 # Search the title of the PR for the `text` [default: true]
