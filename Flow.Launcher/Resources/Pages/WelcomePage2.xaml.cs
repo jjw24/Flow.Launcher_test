@@ -5,6 +5,8 @@ using System;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Navigation;
+using CommunityToolkit.Mvvm.Input;
+using Flow.Launcher.ViewModel;
 
 namespace Flow.Launcher.Resources.Pages
 {
@@ -22,29 +24,29 @@ namespace Flow.Launcher.Resources.Pages
                 Settings = settings;
             else
                 throw new ArgumentException("Unexpected Parameter setting.");
-            
+
             InitializeComponent();
+
             tbMsgTextOriginal = HotkeyControl.tbMsg.Text;
             tbMsgForegroundColorOriginal = HotkeyControl.tbMsg.Foreground;
 
-            HotkeyControl.SetHotkeyAsync(Settings.Hotkey, false);
+            HotkeyControl.ChangeHotkey = ChangeHotkeyCommand;
         }
+
+        [RelayCommand]
+        public void ChangeHotkey(HotkeyModel hotkeyModel)
+        {
+            Settings.Hotkey = hotkeyModel.ToString();
+            HotKeyMapper.SetHotkey(hotkeyModel, HotKeyMapper.OnToggleHotkey);
+        }
+
         private void HotkeyControl_OnGotFocus(object sender, RoutedEventArgs args)
         {
             HotKeyMapper.RemoveHotkey(Settings.Hotkey);
         }
+
         private void HotkeyControl_OnLostFocus(object sender, RoutedEventArgs args)
         {
-            if (HotkeyControl.CurrentHotkeyAvailable)
-            {
-                HotKeyMapper.SetHotkey(HotkeyControl.CurrentHotkey, HotKeyMapper.OnToggleHotkey);
-                Settings.Hotkey = HotkeyControl.CurrentHotkey.ToString();
-            }
-            else
-            {
-                HotKeyMapper.SetHotkey(new HotkeyModel(Settings.Hotkey), HotKeyMapper.OnToggleHotkey);
-            }
-
             HotkeyControl.tbMsg.Text = tbMsgTextOriginal;
             HotkeyControl.tbMsg.Foreground = tbMsgForegroundColorOriginal;
         }

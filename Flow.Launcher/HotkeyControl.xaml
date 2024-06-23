@@ -5,14 +5,10 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:input="clr-namespace:System.Windows.Input;assembly=PresentationCore"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    Height="24"
-    d:DesignHeight="300"
-    d:DesignWidth="300"
+    xmlns:ui="http://schemas.modernwpf.com/2019"
+    xmlns:vm="clr-namespace:Flow.Launcher.ViewModel"
     mc:Ignorable="d">
     <Grid>
-        <Grid.ColumnDefinitions>
-            <ColumnDefinition Width="200" />
-        </Grid.ColumnDefinitions>
         <Popup
             x:Name="popup"
             AllowDrop="True"
@@ -37,20 +33,140 @@
                     VerticalAlignment="Center"
                     FontSize="13"
                     FontWeight="SemiBold"
-                    Foreground="{DynamicResource Color05B}"
-                    Text="{DynamicResource flowlauncherPressHotkey}"
-                    Visibility="Visible" />
+                    Foreground="{Binding MessageColor}"
+                    Text="{Binding Message}"
+                    Visibility="{Binding MessageVisibility}" />
             </Border>
         </Popup>
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition />
+                <ColumnDefinition />
+            </Grid.ColumnDefinitions>
+            <Border
+                x:Name="MenuBorder"
+                Grid.Column="0"
+                Margin="0,0,5,0"
+                Padding="5,0,5,0"
+                Background="{DynamicResource Color12B}"
+                BorderBrush="{DynamicResource ButtonInsideBorder}"
+                BorderThickness="1"
+                CornerRadius="5">
+                <Border.Style>
+                    <Style TargetType="{x:Type Border}">
+                        <Setter Property="Visibility" Value="Collapsed" />
+                        <Style.Triggers>
+                            <DataTrigger Binding="{Binding ElementName=HotkeyBtn, Path=IsChecked}" Value="True">
+                                <Setter Property="Visibility" Value="Visible" />
+                            </DataTrigger>
+                            <DataTrigger Binding="{Binding ElementName=HotkeyBtn, Path=IsChecked}" Value="False">
+                                <Setter Property="Visibility" Value="Collapsed" />
+                            </DataTrigger>
+                        </Style.Triggers>
+                    </Style>
+                </Border.Style>
+                <StackPanel Orientation="Horizontal">
+                    <Button Margin="2" Click="ResetButton_OnClick">
+                        <Button.Content>
+                            <ui:FontIcon FontSize="13" Glyph="&#xe72c;" />
+                        </Button.Content>
+                    </Button>
+                    <Button Margin="2" Click="DeleteBtn_OnClick">
+                        <Button.Content>
+                            <ui:FontIcon FontSize="13" Glyph="&#xe74d;" />
+                        </Button.Content>
+                    </Button>
+                    <Button
+                        Margin="2"
+                        Click="StopRecordingBtn_Click"
+                        Foreground="red">
+                        <Button.Content>
+                            <ui:FontIcon FontSize="13" Glyph="&#xe7c8;" />
+                        </Button.Content>
+                    </Button>
+                </StackPanel>
+            </Border>
 
-        <TextBox
-            x:Name="tbHotkey"
-            Margin="0,0,18,0"
-            VerticalContentAlignment="Center"
-            input:InputMethod.IsInputMethodEnabled="False"
-            GotFocus="tbHotkey_GotFocus"
-            LostFocus="tbHotkey_LostFocus"
-            PreviewKeyDown="TbHotkey_OnPreviewKeyDown"
-            TabIndex="100" />
+            <RadioButton
+                x:Name="HotkeyBtn"
+                Grid.Column="1"
+                Width="Auto"
+                Checked="HotkeyBtn_OnChecked"
+                FontSize="13"
+                FontWeight="Bold"
+                Foreground="{DynamicResource Color01B}"
+                GroupName="HotkeyReg"
+                KeyboardNavigation.TabNavigation="Continue"
+                PreviewKeyDown="OnPreviewKeyDown"
+                Style="{StaticResource {x:Type ToggleButton}}">
+                <RadioButton.Template>
+                    <ControlTemplate TargetType="RadioButton">
+                        <Border
+                            x:Name="ButtonBorder"
+                            Padding="5,0,5,0"
+                            Background="{DynamicResource ButtonBackgroundColor}"
+                            BorderBrush="{DynamicResource ButtonInsideBorder}"
+                            BorderThickness="1"
+                            CornerRadius="5">
+                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center" />
+                        </Border>
+                        <ControlTemplate.Triggers>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsMouseOver" Value="True" />
+                                    <Condition Property="IsChecked" Value="True" />
+                                    <Condition Property="IsPressed" Value="True" />
+                                </MultiTrigger.Conditions>
+                                <Setter TargetName="ButtonBorder" Property="Background" Value="{DynamicResource ButtonMousePressed}" />
+                                <Setter TargetName="ButtonBorder" Property="BorderBrush" Value="{DynamicResource ButtonMousePressedInsideBorder}" />
+                            </MultiTrigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsMouseOver" Value="True" />
+                                    <Condition Property="IsChecked" Value="False" />
+                                </MultiTrigger.Conditions>
+                                <Setter TargetName="ButtonBorder" Property="Background" Value="{DynamicResource ButtonMouseOver}" />
+                            </MultiTrigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsChecked" Value="True" />
+                                </MultiTrigger.Conditions>
+                                <Setter TargetName="ButtonBorder" Property="Background" Value="{DynamicResource ButtonMousePressed}" />
+                                <Setter TargetName="ButtonBorder" Property="BorderBrush" Value="{DynamicResource CustomContextHover}" />
+                            </MultiTrigger>
+                            <MultiTrigger>
+                                <MultiTrigger.Conditions>
+                                    <Condition Property="IsPressed" Value="True" />
+                                    <Condition Property="IsChecked" Value="True" />
+                                </MultiTrigger.Conditions>
+                                <Setter TargetName="ButtonBorder" Property="Background" Value="{DynamicResource ButtonMousePressed}" />
+                                <Setter TargetName="ButtonBorder" Property="BorderBrush" Value="{DynamicResource CustomContextHover}" />
+                            </MultiTrigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </RadioButton.Template>
+                <ToggleButton.Content>
+                    <ItemsControl x:Name="HotkeyList">
+                        <ItemsControl.ItemsPanel>
+                            <ItemsPanelTemplate>
+                                <StackPanel Orientation="Horizontal" />
+                            </ItemsPanelTemplate>
+                        </ItemsControl.ItemsPanel>
+                        <ItemsControl.ItemTemplate>
+                            <DataTemplate>
+                                <Border
+                                    Margin="2,5,2,5"
+                                    Padding="10,5,10,5"
+                                    Background="{DynamicResource AccentButtonBackground}"
+                                    BorderThickness="1"
+                                    CornerRadius="5">
+                                    <TextBlock Text="{Binding}" />
+                                </Border>
+                            </DataTemplate>
+                        </ItemsControl.ItemTemplate>
+                    </ItemsControl>
+                </ToggleButton.Content>
+            </RadioButton>
+        </Grid>
     </Grid>
 </UserControl>
